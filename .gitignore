@@ -1,0 +1,12 @@
+.env
+.claude/settings.local.json
+data/health.db
+__pycache__/
+*.pyc
+*.pyo
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+dist/
+*.egg-info/
+.venv/
