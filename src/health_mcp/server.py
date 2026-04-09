@@ -2,12 +2,11 @@ import logging
 import os
 import sys
 from datetime import date, datetime, timedelta, timezone
-from pathlib import Path
 from typing import Any
 
-from dotenv import load_dotenv
 from fastmcp import FastMCP
 
+from health_mcp.config import DB_PATH, DOTENV_PATH
 from health_mcp.storage.sqlite import HealthStorage
 from health_mcp.tanita.auth import TokenManager
 from health_mcp.tanita.client import HealthPlanetClient
@@ -18,19 +17,15 @@ if sys.platform == "win32":
     import asyncio
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
-# Logging
+# Logging (config.py already called load_dotenv, so LOG_LEVEL is available)
 logging.basicConfig(level=os.environ.get("LOG_LEVEL", "INFO").upper())
 logger = logging.getLogger(__name__)
 
-# Load .env
-load_dotenv(Path(".env"))
-
 # Dependencies (initialised once at module load)
-_token_manager = TokenManager()
+_token_manager = TokenManager(dotenv_path=DOTENV_PATH)
 _token_manager.load_from_env()
 
-_db_path = os.environ.get("SQLITE_DB_PATH", "./data/health.db")
-_storage = HealthStorage(_db_path)
+_storage = HealthStorage(str(DB_PATH))
 _storage.init_db()
 
 _client = HealthPlanetClient(_token_manager)

@@ -9,23 +9,22 @@ import argparse
 import os
 import sys
 from datetime import datetime, timedelta, timezone
-from pathlib import Path
 from urllib.parse import parse_qs, urlencode, urlparse
 
 import httpx
-from dotenv import load_dotenv, set_key
+from dotenv import set_key
+
+from health_mcp.config import DB_PATH, DOTENV_PATH
 
 AUTH_ENDPOINT = "https://www.healthplanet.jp/oauth/auth"
 TOKEN_ENDPOINT = "https://www.healthplanet.jp/oauth/token"
-DOTENV_PATH = Path(".env")
 
 
 def _reset_profile() -> None:
     """Delete cached profile from SQLite."""
-    db_path = os.environ.get("SQLITE_DB_PATH", "./data/health.db")
     from health_mcp.storage.sqlite import HealthStorage
 
-    storage = HealthStorage(db_path)
+    storage = HealthStorage(str(DB_PATH))
     storage.init_db()
     storage.delete_profile()
     print("Profile cache cleared. Next call to get_profile will re-fetch from API.")
@@ -109,7 +108,7 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    load_dotenv(DOTENV_PATH)
+    # load_dotenv is already called by health_mcp.config import
 
     if args.reset_profile:
         _reset_profile()

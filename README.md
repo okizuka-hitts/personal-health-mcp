@@ -28,18 +28,35 @@ python -m health_mcp.tanita.auth
 
 ### 4. Claude Desktop に MCP サーバーを登録
 
-`claude_desktop_config.json` に以下を追加してください：
+`claude_desktop_config.json` に以下を追加してください。`command` には venv 内の Python 実行ファイルのフルパスを指定します。
+
+**Windows:**
 
 ```json
 {
   "mcpServers": {
     "personal-health": {
-      "command": "health-mcp",
-      "cwd": "/path/to/personal-health-mcp"
+      "command": "C:/Users/<username>/path/to/personal-health-mcp/venv/Scripts/python.exe",
+      "args": ["-m", "health_mcp.server"]
     }
   }
 }
 ```
+
+**macOS / Linux:**
+
+```json
+{
+  "mcpServers": {
+    "personal-health": {
+      "command": "/path/to/personal-health-mcp/venv/bin/python",
+      "args": ["-m", "health_mcp.server"]
+    }
+  }
+}
+```
+
+> `cwd` の指定は不要です。サーバーは `__file__` を基点にプロジェクトルートを自動解決します。
 
 ## MCP ツール一覧
 
